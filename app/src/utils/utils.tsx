@@ -1,3 +1,5 @@
+import {IWpApiRoutes, IWpRoutes} from "../interfaces/IRoutes.ts";
+
 export const trim = ( str, charmap = '\\s' ) => str.replace( new RegExp( `^[${charmap}]*(.*?)[${charmap}]*$`, 'g' ), '$1' )
 
 export const getTypeString = (arg) => {
@@ -23,8 +25,8 @@ export const getRouteReadable = path => path.replace( /\(.*?<([a-zA-Z0-9_-]+)>.*
 
 export const getRouteURL = path => `${getRouteReadable( path ).replace( /:/g, '' )}/`
 
-export const getNamespacedRoutes = (routes: object[]) => Object.keys( routes )
-    .reduce( ( namespacedRoutes, key ) => {
+export const getNamespacedRoutes = (routes: IWpRoutes) => Object.keys(routes)
+    .reduce((namespacedRoutes: IWpApiRoutes, key) => {
         let namespace = trim( routes[key].namespace, '/' )
 
         if ( key === `/${namespace}` ) {
@@ -34,7 +36,8 @@ export const getNamespacedRoutes = (routes: object[]) => Object.keys( routes )
         let route = {
             path: getRouteReadable(key),
             relative: getRouteReadable(key).replace( `/${namespace}`, '' ),
-            url: getRouteURL(key)
+            url: getRouteURL(key),
+            endpoints: routes[key].endpoints
         }
 
         namespacedRoutes[ namespace ] = namespacedRoutes[ namespace ] || []
