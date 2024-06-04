@@ -28,9 +28,12 @@ export interface IMethod {
 export interface IMethodArgs {
     name?: string;
     description?: string;
-    type?: string;
-    enum?: any[];
-    default?: any;
+    type?: string | string[];
+    enum?: string[];
+    default?: boolean;
+    items?: {
+		type?: string
+	};
     required?: boolean;
 }
 

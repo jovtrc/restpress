@@ -1,39 +1,39 @@
-import {IWpApiRoutes, IWpRoutes} from "../interfaces/IRoutes.ts";
+import {IMethodArgs, IWpApiRoutes, IWpRoutes} from "../interfaces/IRoutes.ts";
 
-export const trim = ( str, charmap = '\\s' ) => str.replace( new RegExp( `^[${charmap}]*(.*?)[${charmap}]*$`, 'g' ), '$1' )
+export const trim = (str: string, charMap = '\\s') => str.replace( new RegExp( `^[${charMap}]*(.*?)[${charMap}]*$`, 'g' ), '$1' )
 
-export const getTypeString = (arg) => {
+export const getTypeString = (arg: IMethodArgs) => {
     switch(arg.type) {
         case 'array':
             return (arg.items && `${arg.items.type}[]`) || arg.type
         case 'string':
             if (arg.enum) {
-                if (typeof arg.enum === 'object') {
-                    arg.enum = Object.keys(arg.enum)
-                        .sort((a, b) => a - b)
-                        .map(key => arg.enum[key]);
-                }
-                return (`${arg.enum.join(',\n')}`)
+				const enumValues = Object.values(arg.enum)
+                return (`${enumValues.join(',\n')}`)
             }
             return arg.type;
         default:
-            return arg.type
+			if (typeof arg.type === 'object') {
+				return arg.type.join('/')
+			}
+
+			return arg.type
     }
 }
 
-export const getRouteReadable = path => path.replace( /\(.*?<([a-zA-Z0-9_-]+)>.*?\)/g, ':$1' )
+export const getRouteReadable = (path: string) => path.replace( /\(.*?<([a-zA-Z0-9_-]+)>.*?\)/g, ':$1' )
 
-export const getRouteURL = path => `${getRouteReadable( path ).replace( /:/g, '' )}/`
+export const getRouteURL = (path: string) => `${getRouteReadable( path ).replace( /:/g, '' )}/`
 
 export const getNamespacedRoutes = (routes: IWpRoutes) => Object.keys(routes)
     .reduce((namespacedRoutes: IWpApiRoutes, key) => {
-        let namespace = trim( routes[key].namespace, '/' )
+        const namespace = trim( routes[key].namespace, '/' )
 
         if ( key === `/${namespace}` ) {
             return namespacedRoutes
         }
 
-        let route = {
+        const route = {
             path: getRouteReadable(key),
             relative: getRouteReadable(key).replace( `/${namespace}`, '' ),
             url: getRouteURL(key),
