@@ -21,6 +21,9 @@ if (!defined("RESTPRESS_PLUGIN_URL")) {
 	define("RESTPRESS_PLUGIN_URL", plugin_dir_url(__FILE__));
 }
 
+require_once RESTPRESS_PLUGIN_DIR . '/inc/classes/AdminSettings.php';
+require_once RESTPRESS_PLUGIN_DIR . '/inc/classes/RestpressAssets.php';
+
 class Restpress
 {
 	public function __construct()
@@ -72,32 +75,9 @@ class Restpress
 			return $template;
 		}
 
-		add_action('wp_enqueue_scripts', [$this, 'restpressAssets']);
+		add_action('wp_enqueue_scripts', ['RestpressAssets', 'enqueue']);
 
 		return RESTPRESS_PLUGIN_DIR . '/inc/templates/restpress.php';
-	}
-
-	/**
-	 * Enqueues the Restpress assets
-	 *
-	 * @return void
-	 */
-	public function restpressAssets(): void
-	{
-		$assetsDir       = RESTPRESS_PLUGIN_URL . 'dist/';
-		$manifestFile    = RESTPRESS_PLUGIN_DIR . '/dist/.vite/manifest.json';
-		$manifestContent = file_get_contents($manifestFile);
-
-		$manifestData    = json_decode($manifestContent, true);
-		$manifestData    = $manifestData["index.html"];
-
-		$restpressScript = $assetsDir . $manifestData["file"];
-		wp_enqueue_script("restpress-script", $restpressScript, [], RESTPRESS_PLUGIN_VER);
-
-		foreach ($manifestData["css"] as $index => $cssFile) {
-			$styleUrl = $assetsDir . $cssFile;
-			wp_enqueue_style("restpress-style-" . $index, $styleUrl, [], RESTPRESS_PLUGIN_VER);
-		}
 	}
 }
 
