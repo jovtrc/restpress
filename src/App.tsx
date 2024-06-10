@@ -3,12 +3,14 @@ import { getTypeString, getNamespacedRoutes } from "./utils/utils.tsx"
 
 import Menu from "./components/Menu/Menu.tsx";
 import {ISchema} from "./interfaces/IRoutes.ts";
+import config from './data/config'
 
 function App() {
     const [schema, setSchema] = useState<ISchema>({routes: []});
+	const allowedNamespaces   = config.namespaces.length > 0 ? config.namespaces.split(",") : [];
 
     useEffect(() => {
-        fetch('https://wordpress.org/wp-json/')
+        fetch(config.api_base_url)
             .then((response) => response.json())
             .then((data) => {
                 const namespaces = data.namespaces.map((namespace: string) => ({
@@ -41,11 +43,13 @@ function App() {
             <div className="flex-1 flex flex-col divide-y">
             {schema?.routes.length > 0 ? (
                 schema.routes.map((route) => {
+					const isNamespaceAllowed = allowedNamespaces.length <= 0 || allowedNamespaces.includes(route.namespace);
+
                     return (
                         <>
-                            {route.namespace === "wp/v2" && (
+                            {isNamespaceAllowed && (
                                 <>
-                                    {route.endpoints.map((endpointsList) => {
+                                    {route.endpoints?.map((endpointsList) => {
                                         const endpointPath = endpointsList.path;
                                         const endpointUrl = endpointsList.url;
 
