@@ -8,9 +8,10 @@ import config from './data/config'
 function App() {
     const [schema, setSchema] = useState<ISchema>({routes: []});
 	const allowedNamespaces   = config.namespaces.length > 0 ? config.namespaces.split(",") : [];
+	const baseApiUrl          = config.api_base_url.replace(/\/$/, '');
 
     useEffect(() => {
-        fetch(config.api_base_url)
+        fetch(baseApiUrl)
             .then((response) => response.json())
             .then((data) => {
                 const namespaces = data.namespaces.map((namespace: string) => ({
@@ -67,7 +68,7 @@ function App() {
                                                             {endpointPath}
                                                         </p>
 
-                                                        <div className="overflow-x-auto rounded border border-gray-200 mb-6">
+                                                        <div className="overflow-x-auto overflow-y-hidden rounded border border-gray-200 mb-6">
                                                             <table className="w-full divide-y-2 divide-gray-200 bg-white text-sm">
                                                                 <tbody className="divide-y divide-gray-200">
                                                                 <tr>
@@ -76,7 +77,7 @@ function App() {
                                                                 </tr>
                                                                 <tr>
                                                                     <td className="px-4 py-2 bg-gray-100 w-40 font-semibold">URL</td>
-                                                                    <td className="px-4 py-2">https://wordpress.org/wp-json{endpointUrl}</td>
+                                                                    <td className="px-4 py-2">{baseApiUrl}{endpointUrl}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td className="px-4 py-2 bg-gray-100 w-40 font-semibold">Auth</td>
@@ -86,7 +87,7 @@ function App() {
                                                             </table>
                                                         </div>
 
-                                                        <div className="overflow-x-auto rounded border border-gray-200">
+                                                        <div className="overflow-x-auto overflow-y-hidden rounded border border-gray-200">
                                                             <table className="w-full divide-y-2 divide-gray-200 bg-white text-sm overflow-y-hidden">
                                                                 <thead className="text-left bg-gray-100">
                                                                 <tr>
