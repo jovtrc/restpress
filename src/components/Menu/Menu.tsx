@@ -1,6 +1,7 @@
 import {ISchema} from "../../interfaces/IRoutes.ts";
 import ChevronSvg from "../../assets/img/chevron.svg?url";
 import config from "../../data/config.ts";
+import {Link} from "react-router-dom";
 
 export default function Menu({ schema }: { schema: ISchema }) {
 	const allowedNamespaces = config.namespaces.length > 0 ? config.namespaces.split(",") : [];
@@ -32,12 +33,12 @@ export default function Menu({ schema }: { schema: ISchema }) {
 										{route.endpoints?.map((endpoint) => {
 											return (
 												<li key={endpoint.path}>
-													<a
-														href={endpoint.url}
+													<Link
+														to={`api-docs${endpoint.url}`}
 														className="overflow-hidden block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
 													>
 														{endpoint.relative}
-													</a>
+													</Link>
 												</li>
 											)
 										})}
