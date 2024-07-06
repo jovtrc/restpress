@@ -24,6 +24,19 @@ class RestpressAdminSettings
 	public function restpressSettingsFields(): void
 	{
 		add_settings_field(
+			'docs_page_title',
+			'Docs Page Title',
+			[$this, 'restpressBuildField'],
+			'restpress_plugin',
+			'restpress_settings',
+			[
+				'default_value' => "API Docs | Restpress",
+				'label_for'     => 'docs_page_title',
+				'placeholder'   => 'The title for the docs page. Example: My Site API Docs',
+			]
+		);
+
+		add_settings_field(
 			'api_base_url',
 			'API base URL',
 			[$this, 'restpressBuildField'],
@@ -82,14 +95,15 @@ class RestpressAdminSettings
 		$defaultValue = !empty($args['default_value']) ? $args['default_value'] : '';
 		$fieldValue   = !empty($options[$args['label_for']]) ? $options[$args['label_for']] : $defaultValue;
 		$classNames   = 'w-full rounded-lg border border-gray-200 align-top shadow-sm sm:text-sm p-3 ';
+		$classNames   = !empty($args['class_names']) ? $classNames . $args['class_names'] : $classNames;
 
-		if ($args['type'] === 'textarea') {
+		if (!empty($args['type']) && $args['type'] === 'textarea') {
 			?>
 			<textarea
 				rows="<?php echo esc_attr($size); ?>"
 				id="<?php echo esc_attr($args['label_for']); ?>"
 				placeholder="<?php echo esc_attr($args['placeholder']); ?>"
-				class="<?php echo esc_attr($classNames . $args['class_names']); ?>"
+				class="<?php echo esc_attr($classNames); ?>"
 				name="restpress_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
 			><?php echo esc_html($fieldValue); ?></textarea>
 			<?php
@@ -99,7 +113,7 @@ class RestpressAdminSettings
 		<input
 			id="<?php echo esc_attr($args['label_for']); ?>"
 			value="<?php echo esc_attr($fieldValue); ?>"
-			class="<?php echo esc_attr($classNames . $args['class_names']); ?>"
+			class="<?php echo esc_attr($classNames); ?>"
 			placeholder="<?php echo esc_attr($args['placeholder']); ?>"
 			name="restpress_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
 		>
