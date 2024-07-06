@@ -21,7 +21,7 @@ if (!defined("RESTPRESS_PLUGIN_URL")) {
 	define("RESTPRESS_PLUGIN_URL", plugin_dir_url(__FILE__));
 }
 
-require_once RESTPRESS_PLUGIN_DIR . '/inc/classes/AdminSettings.php';
+require_once RESTPRESS_PLUGIN_DIR . '/inc/classes/RestpressAdminSettings.php';
 require_once RESTPRESS_PLUGIN_DIR . '/inc/classes/RestpressAssets.php';
 
 class Restpress
@@ -41,7 +41,7 @@ class Restpress
 	public function restpressRewriteRule(): void
 	{
 		add_rewrite_rule(
-			'api-docs?$',
+			'api-docs?.*$',
 			'index.php?restpress_init=true',
 			'top'
 		);
