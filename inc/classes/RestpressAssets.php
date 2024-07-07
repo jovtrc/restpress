@@ -17,7 +17,14 @@ class RestpressAssets
 		$manifestData    = $manifestData["index.html"];
 
 		$restpressScript = $assetsDir . $manifestData["file"];
-		wp_enqueue_script("restpress-script", $restpressScript, [], RESTPRESS_PLUGIN_VER);
+
+		wp_enqueue_script(
+			"restpress-script",
+			$restpressScript,
+			[],
+			RESTPRESS_PLUGIN_VER,
+			["in_footer" => true]
+		);
 
 		self::enqueueConfig();
 
