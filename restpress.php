@@ -1,12 +1,14 @@
 <?php
 /**
- * Plugin Name: Restpress
- * Description: An automated WordPress API docs generator
- * Plugin URI: https://github.com/jovtrc/restpress
- * Author: João Carvalho
- * Author URI: https://joaoc.dev
- * Version: 0.0.1
- * License: GPLv2 or later
+ * Plugin Name:       Restpress
+ * Description:       The automated REST API docs generator
+ * Plugin URI:        https://www.restpress.org
+ * Author:            João Carvalho
+ * Author URI:        https://joaoc.dev
+ * Version:           0.0.1
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Requires at least: 6.3
  */
 
 if (!defined("RESTPRESS_PLUGIN_VER")) {

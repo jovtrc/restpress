@@ -8,7 +8,7 @@
 			<div class="max-w-4xl mx-auto px-4 py-12">
 				<h1 class="text-2xl text-white text-left">
 					Restpress
-					<span class="text-sm block">The API docs generator for WordPress</span>
+					<span class="text-sm block">The automated REST API docs generator</span>
 				</h1>
 			</div>
 		</div>

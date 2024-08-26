@@ -9,9 +9,16 @@ class RestpressAssets
 	 */
 	public static function enqueue(): void
 	{
+		global $wp_filesystem;
+
+		if (empty($wp_filesystem)) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
 		$assetsDir       = RESTPRESS_PLUGIN_URL . 'dist/';
 		$manifestFile    = RESTPRESS_PLUGIN_DIR . '/dist/.vite/manifest.json';
-		$manifestContent = file_get_contents($manifestFile);
+		$manifestContent = $wp_filesystem->get_contents($manifestFile);
 
 		$manifestData    = json_decode($manifestContent, true);
 		$manifestData    = $manifestData["index.html"];

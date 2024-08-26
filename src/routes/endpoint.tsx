@@ -95,7 +95,6 @@ export default function Endpoint() {
 								endpoint={endpoint}
 								endpointPath={endpointPath}
 								baseApiUrl={baseApiUrl}
-								endpointUrl={endpointUrl}
 							/>
 						);
 					});
@@ -105,7 +104,7 @@ export default function Endpoint() {
 	);
 }
 
-const EndpointDetails = ({ endpoint, endpointPath, baseApiUrl, endpointUrl }: {endpoint: IMethod, endpointPath: string, baseApiUrl: string, endpointUrl: string}) => (
+const EndpointDetails = ({ endpoint, endpointPath, baseApiUrl }: {endpoint: IMethod, endpointPath: string, baseApiUrl: string}) => (
 	<div className="rounded bg-white p-10">
 		<p className="font-mono font-bold mb-4">
 			<span className="whitespace-nowrap rounded-full bg-rose-100 px-2 py-0.5 text-sm text-rose-600 mr-2">
