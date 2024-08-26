@@ -85,7 +85,7 @@ export default function Endpoint() {
 					const endpointUrl = endpointsList.url;
 
 					return endpointsList.endpoints.map((endpoint, endpointIndex) => {
-						if (`${endpointPath}/` !== `/${endpointPathParam}`) {
+						if (endpointUrl !== `/${endpointPathParam}`) {
 							return null;
 						}
 
@@ -123,7 +123,7 @@ const EndpointDetails = ({ endpoint, endpointPath, baseApiUrl, endpointUrl }: {e
 				</tr>
 				<tr>
 					<td className="px-4 py-2 bg-gray-100 w-40 font-semibold">URL</td>
-					<td className="px-4 py-2">{baseApiUrl}{endpointUrl}</td>
+					<td className="px-4 py-2">{baseApiUrl}{endpointPath}</td>
 				</tr>
 				<tr>
 					<td className="px-4 py-2 bg-gray-100 w-40 font-semibold">Auth</td>
