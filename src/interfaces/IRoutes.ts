@@ -2,7 +2,6 @@ export interface ISchema {
     site_name?: string,
     site_home?: string,
     site_icon?: string,
-    site_logo?: string,
     routes: INamespace[]
 }
 

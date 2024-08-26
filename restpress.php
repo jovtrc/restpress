@@ -21,6 +21,10 @@ if (!defined("RESTPRESS_PLUGIN_URL")) {
 	define("RESTPRESS_PLUGIN_URL", plugin_dir_url(__FILE__));
 }
 
+if (!defined("RESTPRESS_PLUGIN_FALLBACK_ICON")) {
+	define("RESTPRESS_PLUGIN_FALLBACK_ICON", "");
+}
+
 require_once RESTPRESS_PLUGIN_DIR . '/inc/classes/RestpressAdminSettings.php';
 require_once RESTPRESS_PLUGIN_DIR . '/inc/classes/RestpressAssets.php';
 

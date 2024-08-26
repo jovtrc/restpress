@@ -15,8 +15,7 @@ export default async function fetchSchemaData(): Promise<ISchema> {
 	return {
 		site_name: data.name,
 		site_home: data.home,
-		site_icon: data.site_icon_url,
-		site_logo: data.site_logo,
+		site_icon: data.site_icon,
 		routes: namespaces
 	};
 }
