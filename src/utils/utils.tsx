@@ -1,48 +1,90 @@
-import {IMethodArgs, IWpApiRoutes, IWpRoutes} from "../interfaces/IRoutes.ts";
+import { IMethodArgs, IWpApiRoutes, IWpRoutes } from "../interfaces/IRoutes.ts";
 
-export const trim = (str: string, charMap = '\\s') => str.replace( new RegExp( `^[${charMap}]*(.*?)[${charMap}]*$`, 'g' ), '$1' )
-
-export const getTypeString = (arg: IMethodArgs) => {
-    switch(arg.type) {
-        case 'array':
-            return (arg.items && `${arg.items.type}[]`) || arg.type
-        case 'string':
-            if (arg.enum) {
-				const enumValues = Object.values(arg.enum)
-                return (`${enumValues.join(',\n')}`)
-            }
-            return arg.type;
-        default:
-			if (typeof arg.type === 'object') {
-				return arg.type.join('/')
-			}
-
-			return arg.type
-    }
+/**
+ * Trims specified characters from the start and end of a string.
+ * Defaults to trimming whitespace.
+ *
+ * @param {string} str - The string to be trimmed.
+ * @param {string} [charMap='\\s'] - The characters to trim (default is whitespace).
+ * @returns {string} - The trimmed string.
+ */
+export function trim(str: string, charMap: string = '\\s'): string {
+    return str.replace(new RegExp(`^[${charMap}]+|[${charMap}]+$`, 'g'), '');
 }
 
-export const getRouteReadable = (path: string) => path.replace( /\(.*?<([a-zA-Z0-9_-]+)>.*?\)/g, ':$1' )
+/**
+ * Returns a readable type string for a given method argument.
+ *
+ * @param {IMethodArgs} arg - The argument object.
+ * @returns {string} - The formatted type string.
+ */
+export function getTypeString(arg: IMethodArgs): string {
+    if (arg.type === 'array') {
+        return `${arg.items?.type ?? 'unknown'}[]`;
+    }
 
-export const getRouteURL = (path: string) => `${getRouteReadable( path ).replace( /:/g, '' )}/`
+    if (arg.type === 'string' && arg.enum) {
+        return Object.values(arg.enum).join(', ');
+    }
 
-export const getNamespacedRoutes = (routes: IWpRoutes) => Object.keys(routes)
-    .reduce((namespacedRoutes: IWpApiRoutes, key) => {
-        const namespace = trim( routes[key].namespace, '/' )
+    return Array.isArray(arg.type) ? arg.type.join('/') : (arg.type ?? '');
+}
 
-        if ( key === `/${namespace}` ) {
-            return namespacedRoutes
+/**
+ * Converts a WordPress route path to a more readable format.
+ * Example: "/wp/v2/posts/(?P<id>\\d+)" -> "/wp/v2/posts/:id"
+ *
+ * @param {string} path - The route path.
+ * @returns {string} - The readable route path.
+ */
+export function getRouteReadable(path: string): string {
+    return path.replace(/\(.*?<([a-zA-Z0-9_-]+)>.*?\)/g, ':$1');
+}
+
+/**
+ * Generates a clean URL from a route path.
+ * Example: "/wp/v2/posts/:id" -> "/wp/v2/posts/id/"
+ *
+ * @param {string} path - The route path.
+ * @returns {string} - The formatted URL.
+ */
+export function getRouteURL(path: string): string {
+    const readablePath = getRouteReadable(path);
+    return `${readablePath.replace(/:/g, '')}/`;
+}
+
+/**
+ * Extracts and organizes routes by namespace.
+ *
+ * @param {IWpRoutes} routes - The WordPress routes object.
+ * @returns {IWpApiRoutes} - The organized routes by namespace.
+ */
+export function getNamespacedRoutes(routes: IWpRoutes): IWpApiRoutes {
+    const namespacedRoutes: IWpApiRoutes = {};
+
+    for (const key in routes) {
+        const route = routes[key];
+        const namespace = trim(route.namespace, '/');
+
+        // Skip the base namespace route
+        if (key === `/${namespace}`) {
+            continue;
         }
 
-        const route = {
+        const formattedRoute = {
             path: getRouteReadable(key),
-            relative: getRouteReadable(key).replace( `/${namespace}`, '' ),
+            relative: getRouteReadable(key).replace(`/${namespace}`, ''),
             url: getRouteURL(key),
-            endpoints: routes[key].endpoints
+            endpoints: route.endpoints,
+        };
+
+        // Initialize namespace array if it doesn't exist
+        if (!namespacedRoutes[namespace]) {
+            namespacedRoutes[namespace] = [];
         }
 
-        namespacedRoutes[ namespace ] = namespacedRoutes[ namespace ] || []
+        namespacedRoutes[namespace].push(formattedRoute);
+    }
 
-        namespacedRoutes[ namespace ].push( route )
-
-        return namespacedRoutes
-    }, {} )
+    return namespacedRoutes;
+}
