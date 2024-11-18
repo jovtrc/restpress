@@ -43,22 +43,11 @@ class RestpressAssets
 
 	private static function enqueueConfig(): void
 	{
-		$options = get_option('restpress_options');
-		$iconUrl = get_site_icon_url(64, RESTPRESS_PLUGIN_FALLBACK_ICON);
-
-		$config = [
-			'site_base_url' => home_url(),
-			'api_base_url'  => get_rest_url(),
-			'namespaces'    => '',
-			'site_icon'     => $iconUrl,
-			'nonce'         => wp_create_nonce('wp_rest'),
-		];
-
-		$config = wp_parse_args($options, $config);
+		$options = RestpressOptions::get();
 
 		wp_add_inline_script(
 			'main-restpress-script',
-			sprintf('var restpress = %s', wp_json_encode($config)),
+			sprintf('var restpress = %s', wp_json_encode($options)),
 			'before'
 		);
 	}
