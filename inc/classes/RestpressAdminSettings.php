@@ -4,12 +4,12 @@ class RestpressAdminSettings
 {
 	public function __construct()
 	{
-		add_action('admin_init', [$this, 'restpressAdminInit']);
-		add_action('admin_menu', [$this, 'restpressAdminMenu']);
-		add_action('admin_init', [$this, 'restpressSettingsFields']);
+		add_action('admin_init', [$this, 'initSettings']);
+		add_action('admin_menu', [$this, 'settingsMenu']);
+		add_action('admin_init', [$this, 'settingsFields']);
 	}
 
-	public function restpressAdminInit(): void
+	public function initSettings(): void
 	{
 		register_setting('restpress_plugin', 'restpress_options');
 
@@ -21,12 +21,36 @@ class RestpressAdminSettings
 		);
 	}
 
-	public function restpressSettingsFields(): void
+	public function settingsMenu(): void
+	{
+		add_submenu_page(
+			'tools.php',
+			'Restpress',
+			'Restpress',
+			'manage_options',
+			'restpress_settings',
+			[$this, 'renderSettingsMenu']
+		);
+	}
+
+	public function renderSettingsMenu(): void
+	{
+		// Check user capabilities
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+
+		RestpressAssets::enqueue();
+
+		include_once RESTPRESS_PLUGIN_DIR . '/inc/templates/admin-settings.php';
+	}
+
+	public function settingsFields(): void
 	{
 		add_settings_field(
 			'docs_page_title',
 			'Docs Page Title',
-			[$this, 'restpressBuildField'],
+			[$this, 'buildField'],
 			'restpress_plugin',
 			'restpress_settings',
 			[
@@ -39,7 +63,7 @@ class RestpressAdminSettings
 		add_settings_field(
 			'api_base_url',
 			'API base URL',
-			[$this, 'restpressBuildField'],
+			[$this, 'buildField'],
 			'restpress_plugin',
 			'restpress_settings',
 			[
@@ -52,7 +76,7 @@ class RestpressAdminSettings
 		add_settings_field(
 			'namespaces',
 			'Accepted Namespaces',
-			[$this, 'restpressBuildField'],
+			[$this, 'buildField'],
 			'restpress_plugin',
 			'restpress_settings',
 			[
@@ -63,59 +87,42 @@ class RestpressAdminSettings
 		);
 	}
 
-	public function restpressAdminMenu(): void
-	{
-		add_submenu_page(
-			'tools.php',
-			'Restpress',
-			'Restpress',
-			'manage_options',
-			'restpress_settings',
-			[$this, 'renderRestpressAdminMenu']
-		);
-	}
-
-	public function renderRestpressAdminMenu(): void
-	{
-		// Check user capabilities
-		if (!current_user_can('manage_options')) {
-			return;
-		}
-
-		RestpressAssets::enqueue();
-
-		include_once RESTPRESS_PLUGIN_DIR . '/inc/templates/admin-settings.php';
-	}
-
-	function restpressBuildField($args): void
+	function buildField($args): void
 	{
 		// Get the value of the setting we've registered with register_setting()
 		$options      = get_option('restpress_options');
-		$size         = $args['size'] ?? 4;
-		$defaultValue = !empty($args['default_value']) ? $args['default_value'] : '';
-		$fieldValue   = !empty($options[$args['label_for']]) ? $options[$args['label_for']] : $defaultValue;
 		$classNames   = 'w-full rounded-lg border border-gray-200 align-top shadow-sm sm:text-sm p-3 ';
-		$classNames   = !empty($args['class_names']) ? $classNames . $args['class_names'] : $classNames;
+        $defaultValue = $args['default_value'] ?? '';
 
-		if (!empty($args['type']) && $args['type'] === 'textarea') {
+        $fieldProps   = [
+            'type'          => $args['type']  ?? 'input',
+            'size'          => $args['size'] ?? 4,
+            'label'         => $args['label_for'],
+            'placeholder'   => $args['placeholder'],
+            'value'         => !empty($options[$args['label_for']]) ? $options[$args['label_for']] : $defaultValue,
+            'class'         => !empty($args['class_names']) ? $classNames . $args['class_names'] : $classNames
+        ];
+
+		if ($fieldProps['type'] === 'textarea') {
 			?>
 			<textarea
-				rows="<?php echo esc_attr($size); ?>"
-				id="<?php echo esc_attr($args['label_for']); ?>"
-				placeholder="<?php echo esc_attr($args['placeholder']); ?>"
-				class="<?php echo esc_attr($classNames); ?>"
-				name="restpress_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
-			><?php echo esc_html($fieldValue); ?></textarea>
+				id="<?php esc_attr_e($fieldProps['label']); ?>"
+				rows="<?php esc_attr_e($fieldProps['size']); ?>"
+				class="<?php esc_attr_e($fieldProps['class']); ?>"
+				placeholder="<?php esc_attr_e($fieldProps['placeholder']); ?>"
+				name="restpress_options[<?php esc_attr_e($fieldProps['label']); ?>]"
+			><?php esc_html_e($fieldProps['value']); ?></textarea>
 			<?php
 			return;
 		}
 		?>
 		<input
-			id="<?php echo esc_attr($args['label_for']); ?>"
-			value="<?php echo esc_attr($fieldValue); ?>"
-			class="<?php echo esc_attr($classNames); ?>"
-			placeholder="<?php echo esc_attr($args['placeholder']); ?>"
-			name="restpress_options[<?php echo esc_attr( $args['label_for'] ); ?>]"
+			type="text"
+			id="<?php esc_attr_e($fieldProps['label']); ?>"
+			value="<?php esc_attr_e($fieldProps['value']); ?>"
+			class="<?php esc_attr_e($fieldProps['class']); ?>"
+			placeholder="<?php esc_attr_e($fieldProps['placeholder']); ?>"
+			name="restpress_options[<?php esc_attr_e($fieldProps['label']); ?>]"
 		>
 		<?php
 	}
