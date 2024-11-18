@@ -1,7 +1,14 @@
 <?php
-
+/**
+ * Class responsible for managing the settings of the Restpress plugin in the WordPress admin area.
+ */
 class RestpressAdminSettings
 {
+    /**
+     * Constructor of the class.
+     *
+     * Adds necessary hooks to initialize settings and admin menu.
+     */
 	public function __construct()
 	{
 		add_action('admin_init', [$this, 'initSettings']);
@@ -9,6 +16,13 @@ class RestpressAdminSettings
 		add_action('admin_init', [$this, 'settingsFields']);
 	}
 
+    /**
+     * Initializes the plugin settings.
+     *
+     * Registers settings options and sections for the plugin.
+     *
+     * @return void
+     */
 	public function initSettings(): void
 	{
 		register_setting('restpress_plugin', 'restpress_options');
@@ -21,6 +35,13 @@ class RestpressAdminSettings
 		);
 	}
 
+    /**
+     * Adds a submenu item for the plugin in the WordPress admin area.
+     *
+     * Creates a submenu page under the "Tools" menu.
+     *
+     * @return void
+     */
 	public function settingsMenu(): void
 	{
 		add_submenu_page(
@@ -33,6 +54,13 @@ class RestpressAdminSettings
 		);
 	}
 
+    /**
+     * Renders the settings menu page content.
+     *
+     * Checks user permissions and includes the settings template.
+     *
+     * @return void
+     */
 	public function renderSettingsMenu(): void
 	{
 		// Check user capabilities
@@ -45,6 +73,13 @@ class RestpressAdminSettings
 		include_once RESTPRESS_PLUGIN_DIR . '/inc/templates/admin-settings.php';
 	}
 
+    /**
+     * Registers the fields for the plugin settings.
+     *
+     * Adds settings fields for customizing the documentation page title, API base URL, and accepted namespaces.
+     *
+     * @return void
+     */
 	public function settingsFields(): void
 	{
 		add_settings_field(
@@ -87,7 +122,16 @@ class RestpressAdminSettings
 		);
 	}
 
-	function buildField($args): void
+    /**
+     * Renders the HTML input field for a setting.
+     *
+     * Builds the input or textarea field based on the provided arguments.
+     *
+     * @param array $args Arguments for building the field, including type, size, label, and placeholder.
+     *
+     * @return void
+     */
+	function buildField(array $args): void
 	{
 		// Get the value of the setting we've registered with register_setting()
 		$options      = get_option('restpress_options');

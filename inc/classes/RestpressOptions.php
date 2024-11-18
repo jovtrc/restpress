@@ -1,6 +1,12 @@
 <?php
 
 class RestpressOptions {
+    /**
+     * Get all the options defined for the plugin.
+     * It also set default values if no one is defined.
+     *
+     * @return array The plugin options
+     */
     public static function get(): array
     {
         $options = get_option('restpress_options');
