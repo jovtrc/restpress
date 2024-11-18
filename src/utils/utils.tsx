@@ -38,7 +38,8 @@ export function getTypeString(arg: IMethodArgs): string {
  * @returns {string} - The readable route path.
  */
 export function getRouteReadable(path: string): string {
-    return path.replace(/\(.*?<([a-zA-Z0-9_-]+)>.*?\)/g, ':$1');
+    const readablePath = path.replace(/\(.*?<([a-zA-Z0-9_-]+)>.*?\)/g, ':$1');
+    return readablePath.replace('?)[\\/\\w%-]+)', '').replace('\\[\\]\\@_\\-]+)', '').replace('?)', '').replace(')/', '/');
 }
 
 /**
